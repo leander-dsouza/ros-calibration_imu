@@ -1,6 +1,6 @@
 # calibration_imu
 
-A ROS package containing GUIs for calibrating accelerometers and magnetometers typically found within Inertial Measurement Units (IMUs).
+A ROS1 package containing GUIs for calibrating accelerometers and magnetometers typically found within Inertial Measurement Units (IMUs).
 
 ![Figure 1: The magnetometer calibration GUI.](doc/images/calibrate_magnetometer.jpg)
 
@@ -16,26 +16,25 @@ A ROS package containing GUIs for calibrating accelerometers and magnetometers t
 
 ## 1: Installation
 
-### 1.1: Building From Source
+## 1: Building From Source
 
-#### Dependencies
+* To install the qt dependencies, download the corresponding libraries:
 
-- [Qt 5+](https://doc.qt.io/qt-5/) (software framework for graphical user interfaces)
-- [Qt 5+ Data Visualization Module](https://doc.qt.io/qt-5/qtdatavisualization-index.html) (Qt module for 3D data visualization)
-- [Robot Operating System (ROS)](http://wiki.ros.org) (robotic software architecture)
-- [ifopt](http://wiki.ros.org/ifopt) (ROS package for IPOPT optimization)
-- [rosbag](http://wiki.ros.org/rosbag) (ROS package for saving ROS topic data)
+    ```bash
+    sudo apt-get install libqt5datavisualization5-dev libqt5charts5-dev
+    ```
 
-#### Building
+* To install the ROS dependencies, use rosdep:
 
-To build from source, clone the latest version from this repository into your catkin workspace and compile the package using
+    ```bash
+    rosdep install --from-paths src --ignore-src -r -yqqq
+    ```
 
-```
-cd catkin_workspace/src
-git clone https://github.com/pcdangio/ros-calibration_imu.git calibration_imu
-cd ../
-catkin_make
-```
+* To build the package, use catkin:
+
+    ```bash
+    catkin build calibration_imu
+    ```
 
 ## 2: Usage
 
@@ -71,7 +70,7 @@ Executing this command will start up the magnetometer calibration GUI.
 The calibration routine needs a set of uncalibrated data to process so it can detect hard-iron and soft-iron distortions. The uncalibrated data is collected by rotating your platform/magnetometer in specific patterns while recording it's data.  To collect data:
 
 1. **CRITICAL:** Ensure your platform is in it's operational configuration. Things like batteries, covers, or other ferrous/magnetic components will all have an effect on the calibration, so they should all be mounted and/or connected during the calibration process.
-2. **CRITICAL:** Set up your platform in an outdoor area free from nearby magnetic interference (e.g. buildings, power lines, metal plates, etc.) 
+2. **CRITICAL:** Set up your platform in an outdoor area free from nearby magnetic interference (e.g. buildings, power lines, metal plates, etc.)
 3. Set up the node to subscribe to your platform's ROS topic for magnetometer data. The magnetometer node automatically subscribes to the `imu/magnetometer` ([sensor_msgs/MagneticField](http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/MagneticField.html) topic, which may be [remapped](http://wiki.ros.org/Remapping%20Arguments) when starting the magnetometer node. **CRITICAL:** Ensure that the magnetometer is transmitting uncalibrated data through the above topic.
 4. Click on the "Start" button in the Data Collection box of the GUI. You will see data start populating in the 3D plot, with a large red point indicating the most recently collected point. The rate at which data is collected can be limited by setting the `~/max_data_rate` parameter (in Hz) in the ROS parameter server.
 5. Rotate your platform in all directions. You will be able to see a 3D ellipsoid start forming in the plot window (a red point shows the current position). Once you can clearly see the general shape of a bounded 3D ellipsoid, you may stop collection. **NOTE:** It is very important for the data points to fully bound the ellipsoid, while it is *NOT* important to have a lot of points.
